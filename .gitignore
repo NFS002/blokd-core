@@ -1,0 +1,13 @@
+# Environment vars
+.env
+
+# Gradle
+build
+gradle
+
+# IDE
+.idea
+.gradle
+
+# OS
+.DS_Store

@@ -1,0 +1,29 @@
+ext.kotlin_version = '1.7.20'
+
+ext.java_version = '1.8'
+
+/* Common project dependencies */
+ext.libraries = [
+        kotlin_gradle: ["org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"],
+
+        kotlin_java8 : ["org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"],
+
+        junit        : ['org.jetbrains.kotlin:kotlin-test',
+                        'org.jetbrains.kotlin:kotlin-test-junit'
+        ],
+        junit_jupiter      : ['org.junit.jupiter:junit-jupiter-api:5.9.0'],
+        kafka        : [
+                'org.apache.kafka:kafka-clients:3.3.1',
+                'org.apache.kafka:kafka-streams:3.3.1',
+                'org.apache.kafka:connect-runtime:2.6.3',
+                'io.confluent:kafka-json-schema-serializer:7.2.1'
+        ],
+        jackson      : [
+                'com.fasterxml.jackson.core:jackson-databind:2.13.4',
+                'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+'
+        ],
+        log4j        : [
+                'org.slf4j:slf4j-api:2.0.0',
+                'org.slf4j:slf4j-log4j12:2.0.0'
+        ],
+]

@@ -1,0 +1,36 @@
+/* Gradle plugin to build a docker image */
+
+jib {
+    def workDir = '/app'
+    def configDir = "/Users/noah/projects/blokd/sample-configs/3sig"
+    def fqMainClassName = "blokd.node.examples.producer.ProducerExample"
+    def imageVariant = "$fqMainClassName".substring("$fqMainClassName".lastIndexOf(".") + 1).replace("Example", "").toLowerCase()
+    def configVariant = configDir.substring(configDir.lastIndexOf("/") + 1)
+    container {
+        mainClass = fqMainClassName
+        environment = [
+                'BLOKD_CONFIG_DIR': "${workDir}/${configDir}".toString()
+        ]
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        workingDirectory = workDir
+
+    }
+    extraDirectories{
+        paths {
+            path {
+                from = configDir
+                into = "${workDir}/${configDir}".toString()
+                excludes = ['keys/*']
+            }
+        }
+
+    }
+
+    to {
+        image = "rockercockerdockerman/blokd-$imageVariant-$configVariant"
+        auth {
+            username = 'rockercockerdockerman'
+            password = "$System.env.DOCKER_PASSWORD"
+        }
+    }
+}
