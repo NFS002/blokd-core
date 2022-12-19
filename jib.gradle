@@ -9,7 +9,7 @@ jib {
     container {
         mainClass = fqMainClassName
         environment = [
-                'BLOKD_CONFIG_DIR': "${workDir}/${configDir}".toString()
+                'BLOKD__CONFIG_DIR': "${workDir}/${configDir}".toString()
         ]
         creationTime = 'USE_CURRENT_TIMESTAMP'
         workingDirectory = workDir

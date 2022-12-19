@@ -14,7 +14,7 @@ import kotlin.io.path.Path
 
 val LOGGER: Logger = Logger.getLogger("utils")
 
-var CONFIG_DIR: String = System.getenv("BLOKD_CONFIG_DIR") ?: System.getProperty("user.dir").plus("/config")
+var CONFIG_DIR: String = System.getenv("BLOKD__CONFIG_DIR") ?: System.getProperty("user.dir").plus("/config")
 
 var BASE_PROPERTIES = loadBlokdProperties()
 
