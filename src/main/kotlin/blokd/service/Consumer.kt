@@ -54,13 +54,15 @@ object Consumer {
 
         val cachedBlock = Cache.getOrCreate(block.copy())
 
+        /* When the same block we just received has been previously seen and cached, it is possible that some block signature
+         * in the block we just processed won't be in the cached block, so we have to transfer them across.
+         */
         previouslyCached.then {
             block.signatures.forEach {
                 cachedBlock.signatures.add(it, replace = false)
             }
             LOGGER.info("ADDED BLOCK SIGNATURES | signatures=${block.signatures.size}, total-signatures=${cachedBlock.signatures.size}")
         }
-
 
         cachedBlock.isSignedBy(keyPair.public).ifTrue {
             LOGGER.info("PREVIOUSLY SIGNED | key-id='${keyPair.public.id().shorten()}'")

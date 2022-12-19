@@ -86,6 +86,10 @@ object Cache {
         return block
     }
 
+    fun clear() {
+        this.blocks.clear()
+    }
+
     operator fun get(x: Int) : Block {
         return this.blocks[x]
     }

@@ -14,7 +14,7 @@ const val DOCKER_USER_NAME = "rockercockerdockerman"
 fun beforeAll() {
     PropertyConfigurator.configure("$CONFIG_DIR/log4j.properties")
     BlockChain.reset()
-    Cache.blocks.clear()
+    Cache.clear()
     with (AdminClient.create(loadKafkaConfig())) {
         var topicNames = listTopics().names().get()
         topicNames.contains(BLOCKS_TOPIC_NAME).then {

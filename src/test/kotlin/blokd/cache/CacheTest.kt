@@ -14,6 +14,7 @@ class CacheTest {
     @Before
     fun before() {
         BlockChain.reset()
+        Cache.clear()
     }
 
     private fun loadBlocks(blocks: List<Block>) {
