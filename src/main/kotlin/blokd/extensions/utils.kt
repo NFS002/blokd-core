@@ -4,15 +4,21 @@ import java.io.FileInputStream
 
 import java.util.*
 
-val KAFKA_CLIENT_PROPERTIES = loadBlokdProperties("client.properties")
 
-val KAFKA_GROUP_ID: String = KAFKA_CLIENT_PROPERTIES.getProperty("kafka.group-id", PRIMARY_KEYPAIR.public.id())
+private const val CLIENT_CONFIG_FILENAME = "client.json"
 
-val KAFKA_CLIENT_ID: String = KAFKA_CLIENT_PROPERTIES.getProperty("kafka.client-id", PRIMARY_KEYPAIR.public.id())
+val CLIENT_PROPERTIES = loadBlokdProperties(CLIENT_CONFIG_FILENAME)
 
-val KAFKA_POLL_DURATION: Long = 10000
+val KAFKA_CLIENT_PROPERTIES = CLIENT_PROPERTIES.getJSONObject("kafka")
 
-const val BLOCKS_TOPIC_NAME: String = "blocks_v20"
+
+val KAFKA_CLIENT_ID: String = CLIENT_PROPERTIES.getString("clientId") ?: PRIMARY_KEYPAIR.public.id()
+
+val KAFKA_GROUP_ID: String = KAFKA_CLIENT_PROPERTIES.getString("groupId") ?: PRIMARY_KEYPAIR.public.id()
+
+val BLOCKS_TOPIC_NAME: String = KAFKA_CLIENT_PROPERTIES.getString("topic")
+
+val KAFKA_POLL_DURATION: Long = KAFKA_CLIENT_PROPERTIES.getLong("pollDuration")
 
 fun loadKafkaConfig():Properties {
     val props = Properties()

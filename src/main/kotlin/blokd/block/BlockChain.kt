@@ -55,7 +55,8 @@ object BlockChain {
     }
 
     fun validateBlock(block: Block): Result<Unit> {
-        val minSignatures = BASE_PROPERTIES.getProperty("validation.min-signatures").toInt()
+        val validation = BASE_PROPERTIES.getJSONObject("validation")
+        val minSignatures = validation.getString("minSignatures").toInt()
         return kotlin.runCatching {
             when {
                 (block.signatures.size < minSignatures) ->

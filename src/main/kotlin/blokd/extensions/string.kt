@@ -1,7 +1,9 @@
 package blokd.extensions
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.math.BigInteger
@@ -12,27 +14,28 @@ import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import kotlin.io.path.Path
 
+private const val PUBLIC_KEY_FILENAME = "public"
+
+private const val PRIVATE_KEY_FILENAME = "private"
+
+private const val CONFIG_FILENAME = "blokd.json"
+
 val LOGGER: Logger = Logger.getLogger("utils")
 
 var CONFIG_DIR: String = System.getenv("BLOKD_CONFIG_DIR") ?: System.getProperty("user.dir").plus("/config")
 
 var BASE_PROPERTIES = loadBlokdProperties()
 
-private const val PUBLIC_KEY_FILENAME = "public"
-
-private const val PRIVATE_KEY_FILENAME = "private"
-
 val PRIMARY_KEYPAIR = getOrLoadKeys()
 
-fun loadBlokdProperties(fileName: String = "blokd.properties"): Properties {
+fun loadBlokdProperties(fileName: String = CONFIG_FILENAME): JSONObject {
     val path = Path(CONFIG_DIR).resolve(fileName)
     val f = path.toFile()
     when {
         f.exists() -> {
+            val mapper = jacksonObjectMapper()
             FileInputStream(f).use {
-                val props = Properties()
-                props.load(it)
-                return props
+                return mapper.readValue(it, JSONObject::class.java)
             }
         }
         else -> {

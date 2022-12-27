@@ -1,0 +1,18 @@
+{
+  "nodes": {
+    "max": 3,
+    "keys": []
+  },
+  "validation": {
+    "minSignatures": 1
+  },
+  "initialState" : {
+    "difficulty": 2
+  },
+  "block": {
+    "maxTransactions": 5
+  },
+  "certificateAuthority" : {
+
+  }
+}

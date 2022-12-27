@@ -1,0 +1,6 @@
+{
+  "kafka": {
+    "topic": "blocks_v20",
+    "pollDuration": 10000
+  }
+}
