@@ -1,5 +1,6 @@
 package blokd.serializer
 
+import blokd.block.cache.Cache
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
@@ -18,12 +19,20 @@ private fun getRSAKeySerializerModule(): SimpleModule {
     return module
 }
 
+private fun getCacheSerializerModule(): SimpleModule {
+    val module = SimpleModule()
+    module.addSerializer(Cache::class.java, CacheSerializer())
+    return module
+}
+
 fun configureObjectMapper(mapper: ObjectMapper) : ObjectMapper {
     mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
     mapper.configure(SerializationFeature.INDENT_OUTPUT, true)
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
     val rsaModule = getRSAKeySerializerModule()
+    val cacheModule = getCacheSerializerModule()
     mapper.registerModule(rsaModule)
+    mapper.registerModule(cacheModule)
     return mapper
 }
 

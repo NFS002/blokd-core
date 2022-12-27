@@ -16,7 +16,7 @@ class BlockSerializationTest {
 
     @Before
     fun before() {
-        mapper = configureObjectMapper(jacksonObjectMapper())
+        mapper = blokdObjectMapper()
     }
 
     /* Serialization/Deserialisation test:
