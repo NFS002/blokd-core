@@ -4,7 +4,7 @@ import blokd.block.Block
 import blokd.block.BlockChain
 import blokd.block.cache.Cache
 import blokd.extensions.*
-import blokd.serializer.BlokdCoreDeserializer
+import blokd.serializer.BlokdDeserializer
 import io.confluent.kafka.serializers.KafkaJsonDeserializerConfig.JSON_VALUE_TYPE
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.ConsumerRecords
@@ -22,7 +22,7 @@ object Consumer {
     private fun loadBlockConsumerConfig(): Properties {
         val properties = loadKafkaConfig()
         properties[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
-        properties[VALUE_DESERIALIZER_CLASS_CONFIG] = BlokdCoreDeserializer::class.java.name
+        properties[VALUE_DESERIALIZER_CLASS_CONFIG] = BlokdDeserializer::class.java.name
         properties[JSON_VALUE_TYPE] = Block::class.java
         properties[GROUP_ID_CONFIG] = KAFKA_GROUP_ID
         properties[CLIENT_ID_CONFIG] =  KAFKA_CLIENT_ID

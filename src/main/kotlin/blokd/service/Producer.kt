@@ -4,7 +4,7 @@ import blokd.block.Block
 import blokd.extensions.BLOCKS_TOPIC_NAME
 import blokd.extensions.KAFKA_CLIENT_ID
 import blokd.extensions.loadKafkaConfig
-import blokd.serializer.BlokdCoreSerializer
+import blokd.serializer.BlokdSerializer
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -36,7 +36,7 @@ object Producer {
         // Add additional properties.
         props[ACKS_CONFIG] = "all"
         props[KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.qualifiedName
-        props[VALUE_SERIALIZER_CLASS_CONFIG] = BlokdCoreSerializer::class.qualifiedName
+        props[VALUE_SERIALIZER_CLASS_CONFIG] = BlokdSerializer::class.qualifiedName
         props[CLIENT_ID_CONFIG] = KAFKA_CLIENT_ID
         return props
     }
