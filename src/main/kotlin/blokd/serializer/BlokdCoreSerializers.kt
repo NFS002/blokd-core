@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
 
-class BlockSerializer : Serializer<Block> {
+class BlokdCoreSerializer : Serializer<Block> {
 
     private val mapper = jacksonObjectMapper()
 
@@ -20,7 +20,7 @@ class BlockSerializer : Serializer<Block> {
     }
 }
 
-class BlockDeserializer : Deserializer<Block> {
+class BlokdCoreDeserializer : Deserializer<Block> {
 
     private val mapper = jacksonObjectMapper()
 
