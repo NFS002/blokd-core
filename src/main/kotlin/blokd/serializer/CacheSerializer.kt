@@ -9,7 +9,10 @@ class CacheSerializer : JsonSerializer<Cache>() {
 
     override fun serialize(value: Cache?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         value?.let {
-            gen?.writePOJOField("blocks", it.blocks)
+            gen?.let {
+                it.writeStartObject()
+                it.writePOJOField("blocks", value.blocks)
+            }
         }
     }
 
