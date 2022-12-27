@@ -149,7 +149,7 @@ class ContractTest {
     fun `Unhappy contract journey - Contract not signed by its creator when it is registered`() {
         val keypair = newKeypair()
         val contract = randomContract()
-        val prevHash = BlockChain.getPreviousBlock()?.header ?: ""
+        val prevHash = BlockChain.getLastBlockHeader()
         val block = Block(previousHash = prevHash, blockData = listOf(contract))
         block.sign(keypair)
         BlockChain.add(block).getOrThrow()

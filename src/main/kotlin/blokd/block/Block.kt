@@ -14,7 +14,7 @@ import java.security.PublicKey
 import java.time.Instant
 
 data class Block @JsonCreator constructor(
-    @JsonProperty val previousHash: String = BlockChain.getPreviousBlock()?.header ?: "",
+    @JsonProperty val previousHash: String = BlockChain.getLastBlockHeader(),
     @JsonProperty val expectedHeight: Long = BlockChain.nextHeight,
     @JsonProperty val blockData: List<BlockData> = listOf(),
     @JsonProperty val nonce: Long = 0,

@@ -14,7 +14,8 @@ object BlockChain {
     private const val difficulty: Int = 2
     private const val prefix: String = "0"
 
-    private val contracts: HashMap<String, Contract> = hashMapOf()
+    val contracts: HashMap<String, Contract> = hashMapOf()
+    val signedContracts: HashMap<String, SignedContract> = hashMapOf()
 
     val nextHeight: Long
         get() = blocks.size.toLong()
@@ -39,7 +40,7 @@ object BlockChain {
 
     private fun canAccept(block: Block): Result<Boolean> {
         return kotlin.runCatching {
-            val currHash: String = this.getPreviousBlock()?.header ?: ""
+            val currHash: String = this.getLastBlockHeader()
             (block.expectedHeight == this.nextHeight).ifTrue {
                 (block.previousHash == currHash).ifTrue {
                     // TODO("Check new blockchain is valid and this block meets validation rules")
@@ -92,16 +93,7 @@ object BlockChain {
             for (blockData in block.blockData) {
                 when (blockData) {
                     is Contract -> registerContract(blockData)
-                    is SignedContract -> {
-                        val contractId = blockData.contractId
-                        val contract = contracts.getOrElse(contractId) {
-                            throw java.lang.IllegalStateException("Contract not registered")
-                        }
-
-                        (!blockData.validateSignature(contract.intendedRecipient)).then {
-                            throw SignatureException("Contract signature is invalid")
-                        }
-                    }
+                    is SignedContract -> registerSignedContract(blockData)
                 }
             }
         }
@@ -127,26 +119,39 @@ object BlockChain {
         contracts[contractId] = contract
     }
 
+    private fun registerSignedContract(signedContract: SignedContract) {
+        val contractId = signedContract.contractId
+
+        val contract = contracts.getOrElse(contractId) {
+            throw IllegalStateException("Initial Contract not registered")
+        }
+
+        (signedContracts.containsKey(contractId)).then {
+            throw IllegalStateException("Contract has already been signed")
+        }
+
+        (!signedContract.validateSignature(contract.intendedRecipient)).then {
+            throw SignatureException("Contract signature is invalid")
+        }
+
+        signedContracts[contractId] = signedContract
+    }
+
     private fun hasRegisteredContract(contractId: String): Boolean {
         return contracts.containsKey(contractId)
     }
 
     fun findSigned(contractId: String): SignedContract? {
         contracts.getOrElse(contractId) { throw IllegalStateException("Initial contract was never registered") }
-        blocks.forEach { block ->
-            block.blockData.forEach { blockData ->
-                (blockData as? SignedContract)?.let {
-                    (blockData.contractId == contractId).then {
-                        return blockData
-                    }
-                }
-            }
-        }
-        return null
+        return signedContracts.getOrDefault(contractId, null)
     }
 
-    fun getPreviousBlock(): Block? {
+    fun getLastBlock(): Block? {
         return blocks.lastOrNull()
+    }
+
+    fun getLastBlockHeader(): String {
+        return getLastBlock()?.header ?: ""
     }
 
     fun reset() {
