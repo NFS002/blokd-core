@@ -47,7 +47,7 @@ fun registerContract(owner: KeyPair, intendedRecipient: PublicKey, sign: Boolean
     val prevHash = BlockChain.getLastBlockHeader()
     val block = Block(previousHash = prevHash, blockData = listOf(contract))
     block.sign(owner)
-    BlockChain.add(block)
+    BlockChain.add(block).getOrThrow()
     return contract
 
 }

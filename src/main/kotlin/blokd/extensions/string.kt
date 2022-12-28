@@ -1,9 +1,10 @@
 package blokd.extensions
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import blokd.config.BlokdConfig
+import blokd.config.ClientConfig
+import blokd.serializer.blokdObjectMapper
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
-import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.math.BigInteger
@@ -14,28 +15,32 @@ import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import kotlin.io.path.Path
 
-private const val PUBLIC_KEY_FILENAME = "public"
+const val PUBLIC_KEY_FILENAME = "public"
 
-private const val PRIVATE_KEY_FILENAME = "private"
+const val PRIVATE_KEY_FILENAME = "private"
 
-private const val CONFIG_FILENAME = "blokd.json"
+const val CONFIG_FILENAME = "blokd.json"
+
+private const val CLIENT_CONFIG_FILENAME = "client.json"
 
 val LOGGER: Logger = Logger.getLogger("utils")
 
 var CONFIG_DIR: String = System.getenv("BLOKD_CONFIG_DIR") ?: System.getProperty("user.dir").plus("/config")
 
-var BASE_PROPERTIES = loadBlokdProperties()
+var BASE_PROPERTIES: BlokdConfig = loadConfig(fileName = CONFIG_FILENAME)
+
+var CLIENT_PROPERTIES: ClientConfig = loadConfig(CLIENT_CONFIG_FILENAME)
 
 val PRIMARY_KEYPAIR = getOrLoadKeys()
 
-fun loadBlokdProperties(fileName: String = CONFIG_FILENAME): JSONObject {
+inline fun <reified T> loadConfig(fileName: String): T {
     val path = Path(CONFIG_DIR).resolve(fileName)
     val f = path.toFile()
     when {
         f.exists() -> {
-            val mapper = jacksonObjectMapper()
+            val mapper = blokdObjectMapper()
             FileInputStream(f).use {
-                return mapper.readValue(it, JSONObject::class.java)
+                return mapper.readValue(it, T::class.java)
             }
         }
         else -> {
@@ -48,9 +53,19 @@ fun loadBlokdProperties(fileName: String = CONFIG_FILENAME): JSONObject {
     }
 }
 
-fun reloadBaseProperties(configDir: String) {
+fun loadKafkaConfig(): Properties {
+    val props = Properties()
+    val kafkaConfigPath = "$CONFIG_DIR/kafka.config"
+    FileInputStream(kafkaConfigPath).use {
+        props.load(it)
+    }
+    return props
+}
+
+fun reloadConfig(configDir: String) {
     CONFIG_DIR = configDir
-    BASE_PROPERTIES = loadBlokdProperties()
+    BASE_PROPERTIES = loadConfig(CONFIG_FILENAME)
+    CLIENT_PROPERTIES = loadConfig(CLIENT_CONFIG_FILENAME)
 }
 
 fun String.hash(algorithm: String = "SHA-256"): String {

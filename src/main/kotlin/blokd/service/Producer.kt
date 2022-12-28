@@ -1,8 +1,8 @@
 package blokd.service
 
 import blokd.block.Block
-import blokd.extensions.BLOCKS_TOPIC_NAME
-import blokd.extensions.KAFKA_CLIENT_ID
+import blokd.config.Kafka
+import blokd.extensions.CLIENT_PROPERTIES
 import blokd.extensions.loadKafkaConfig
 import blokd.serializer.BlokdSerializer
 import org.apache.kafka.clients.admin.AdminClient
@@ -37,19 +37,19 @@ object Producer {
         props[ACKS_CONFIG] = "all"
         props[KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.qualifiedName
         props[VALUE_SERIALIZER_CLASS_CONFIG] = BlokdSerializer::class.qualifiedName
-        props[CLIENT_ID_CONFIG] = KAFKA_CLIENT_ID
+        props[CLIENT_ID_CONFIG] = CLIENT_PROPERTIES.kafka.clientId
         return props
     }
 
     fun publish(block: Block) {
         val props = loadBlockProducerConfig()
-        val res = createTopic(props, NewTopic(BLOCKS_TOPIC_NAME, 1, 3))
-        this.handleTopicCreationResult(BLOCKS_TOPIC_NAME, res)
+        val res = createTopic(props, NewTopic(CLIENT_PROPERTIES.kafka.topic, 1, 3))
+        this.handleTopicCreationResult(CLIENT_PROPERTIES.kafka.topic, res)
 
         val producer: KafkaProducer<String, Block> = KafkaProducer<String, Block>(props)
 
         producer.use {
-            val record = ProducerRecord(BLOCKS_TOPIC_NAME, block.header, block)
+            val record = ProducerRecord(CLIENT_PROPERTIES.kafka.topic, block.header, block)
                 it.send(record) { m: RecordMetadata, e: Exception? ->
                 this.handlePublishResult<Block>(record, m, e)
             }
@@ -73,7 +73,7 @@ object Producer {
 
     private fun <T> handlePublishResult(record: ProducerRecord<String, T>, metadata: RecordMetadata, exception: Exception?) {
         exception?.let {
-            LOGGER.error("Publishing '${record.value()}' to'${BLOCKS_TOPIC_NAME}' failed: $exception")
+            LOGGER.error("Publishing '${record.value()}' to'${CLIENT_PROPERTIES.kafka.topic}' failed: $exception")
             throw it
         } ?: run {
             LOGGER.info("Publishing '${record.value()}' to topic '${metadata.topic()}' succeeded.")

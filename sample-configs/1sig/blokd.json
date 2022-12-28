@@ -9,10 +9,10 @@
   "initialState" : {
     "difficulty": 2
   },
-  "block": {
+  "blocks": {
     "maxTransactions": 5
   },
   "certificateAuthority" : {
-
+    "name": "CA"
   }
 }

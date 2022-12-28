@@ -3,6 +3,7 @@ package blokd.service
 import blokd.block.Block
 import blokd.block.BlockChain
 import blokd.block.cache.Cache
+import blokd.config.Kafka
 import blokd.extensions.*
 import blokd.serializer.BlokdDeserializer
 import io.confluent.kafka.serializers.KafkaJsonDeserializerConfig.JSON_VALUE_TYPE
@@ -24,8 +25,8 @@ object Consumer {
         properties[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
         properties[VALUE_DESERIALIZER_CLASS_CONFIG] = BlokdDeserializer::class.java.name
         properties[JSON_VALUE_TYPE] = Block::class.java
-        properties[GROUP_ID_CONFIG] = KAFKA_GROUP_ID
-        properties[CLIENT_ID_CONFIG] =  KAFKA_CLIENT_ID
+        properties[GROUP_ID_CONFIG] = CLIENT_PROPERTIES.kafka.groupId
+        properties[CLIENT_ID_CONFIG] =  CLIENT_PROPERTIES.kafka.clientId
         //properties[AUTO_OFFSET_RESET_CONFIG] = "latest"
         properties[ENABLE_AUTO_COMMIT_CONFIG] = false
         properties[AUTO_OFFSET_RESET_CONFIG] = "earliest"
@@ -38,12 +39,15 @@ object Consumer {
         val properties = loadBlockConsumerConfig()
 
         val blockConsumer = KafkaConsumer<String, Block>(properties).apply {
-            subscribe(listOf(BLOCKS_TOPIC_NAME))
+            subscribe(listOf(CLIENT_PROPERTIES.kafka.topic))
         }
 
         val keyPair = PRIMARY_KEYPAIR
-        LOGGER.debug("POLLING | topic='${blockConsumer.subscription()}', client-id=$KAFKA_CLIENT_ID, group-id=$KAFKA_GROUP_ID")
-        val records: ConsumerRecords<String, Block> = blockConsumer.poll(ofMillis(KAFKA_POLL_DURATION))
+        val clientId = CLIENT_PROPERTIES.kafka.clientId
+        val groupId = CLIENT_PROPERTIES.kafka.groupId
+        val pollDuration = CLIENT_PROPERTIES.kafka.pollDuration
+        LOGGER.debug("POLLING | topic='${blockConsumer.subscription()}', client-id=$clientId, group-id=$groupId")
+        val records: ConsumerRecords<String, Block> = blockConsumer.poll(ofMillis(pollDuration))
         LOGGER.debug("RECEIVED | records=${records.count()}, topic=${blockConsumer.subscription()}")
         val lastRecord = records.last()
         val key = lastRecord.key()

@@ -2,8 +2,10 @@ package blokd.block
 
 import blokd.block.actions.Contract
 import blokd.block.actions.SignedContract
+import blokd.config.Validation
 import blokd.extensions.*
 import org.apache.log4j.Logger
+import scala.Enumeration.Val
 import java.security.SignatureException
 
 object BlockChain {
@@ -55,8 +57,8 @@ object BlockChain {
     }
 
     fun validateBlock(block: Block): Result<Unit> {
-        val validation = BASE_PROPERTIES.getJSONObject("validation")
-        val minSignatures = validation.getString("minSignatures").toInt()
+
+        val minSignatures = BASE_PROPERTIES.validation.minSignatures
         return kotlin.runCatching {
             when {
                 (block.signatures.size < minSignatures) ->
