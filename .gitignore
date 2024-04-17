@@ -11,3 +11,7 @@ gradle
 
 # OS
 .DS_Store
+
+config
+sample-configs/**/keys
+sample-configs/**/kafka.config

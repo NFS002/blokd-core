@@ -14,7 +14,7 @@ import org.apache.log4j.PropertyConfigurator
 
 fun main() {
     PropertyConfigurator.configure("$CONFIG_DIR/log4j.properties")
-    val text = "This is a contract (v2) for Kefei! Will she sign it?"
+    val text = "This is a contract (v2)"
     val keyPair1 = PRIMARY_KEYPAIR
     val keyPair2 = newKeypair()
     val contract = Contract(text, owner = keyPair1.public, intendedRecipient = keyPair2.public)

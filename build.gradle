@@ -13,9 +13,20 @@ plugins {
 group = 'io.skylines'
 version = '1.0'
 
-testSets {
-    integrationTest
-}
+//compileKotlin {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}
+//compileTestKotlin {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}
+//
+//testSets {
+//    integrationTest
+//}
 
 repositories {
     mavenCentral()
@@ -37,33 +48,22 @@ dependencies {
 
     testImplementation libraries.junit_jupiter
 
-    integrationTestImplementation "org.testcontainers:testcontainers:1.17.5"
-
-    integrationTestImplementation 'io.kotest:kotest-extensions-testcontainers-jvm:4.4.3'
-
-    integrationTestImplementation 'org.testcontainers:kafka:1.17.5'
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+//    integrationTestImplementation "org.testcontainers:testcontainers:1.17.5"
+//
+//    integrationTestImplementation 'io.kotest:kotest-extensions-testcontainers-jvm:4.4.3'
+//
+//    integrationTestImplementation 'org.testcontainers:kafka:1.17.5'
 }
 
 apply from: './jib.gradle'
 
-task runProducer(type: JavaExec) {
+tasks.register('runProducer', JavaExec) {
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'blokd.node.examples.producer.ProducerExample'
+    mainClass = 'blokd.examples.producer.ProducerExample'
 }
 
 
-task runConsumer(type: JavaExec) {
+tasks.register('runConsumer', JavaExec) {
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'blokd.node.examples.consumer.ConsumerExample'
+    mainClass = 'blokd.examples.consumer.ConsumerExample'
 }

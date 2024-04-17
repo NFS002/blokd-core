@@ -1,6 +1,8 @@
 {
   "kafka": {
     "topic": "blocks_v20",
-    "pollDuration": 10000
+    "pollDuration": 10000,
+    "clientId": "client1",
+    "groupId": "group1"
   }
 }
